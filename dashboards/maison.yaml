@@ -1,0 +1,122 @@
+# =====================================================================
+#  Dashboard d'exemple "Maison" — Berr Glass
+#  ⚠️  Remplace les entity_id par les tiens (Outils de développement →
+#      États pour les retrouver). Tout ce qui est marqué "À ADAPTER".
+#
+#  Utilisation : Paramètres → Tableaux de bord → Ajouter → "Nouveau
+#  tableau de bord à partir de zéro" → ⋮ → Éditeur de configuration
+#  brute → coller ce fichier.
+# =====================================================================
+title: Maison
+views:
+  - title: Accueil
+    path: accueil
+    icon: mdi:home-variant
+    type: sections
+    max_columns: 3
+    theme: Berr Glass
+    sections:
+      # ---------------- Colonne 1 : en-tête + sécurité ----------------
+      - type: grid
+        cards:
+          - type: custom:berr-header-card
+            user: Bilou
+            weather: weather.maison                     # À ADAPTER
+            chips:
+              - alarm_control_panel.alarme              # À ADAPTER
+              - person.bilou                            # À ADAPTER
+              - person.kamelya                          # À ADAPTER
+
+          - type: heading
+            heading: Sécurité
+            icon: mdi:shield-home-outline
+
+          - type: custom:berr-tile-card
+            entity: lock.porte_entree                   # À ADAPTER
+            name: Serrure
+          - type: custom:berr-tile-card
+            entity: alarm_control_panel.alarme          # À ADAPTER
+            name: Alarme
+            tap_action: more-info
+          - type: custom:berr-tile-card
+            entity: binary_sensor.badring_fuite         # À ADAPTER (capteur fuite IKEA)
+            name: Fuite d'eau
+          - type: custom:berr-tile-card
+            entity: input_boolean.simulation_presence   # À ADAPTER
+            name: Simulation
+            icon: mdi:home-lightning-bolt-outline
+
+      # ---------------- Colonne 2 : multimédia + aspirateur ----------
+      - type: grid
+        cards:
+          - type: heading
+            heading: Multimédia
+            icon: mdi:play-box-multiple-outline
+          - type: custom:berr-media-card
+            entity: media_player.tv_salon               # À ADAPTER
+            name: TV Salon
+          - type: custom:berr-media-card
+            entity: media_player.echo_spot              # À ADAPTER
+            name: Echo Spot
+            show_volume: true
+
+          - type: heading
+            heading: Ménage
+            icon: mdi:robot-vacuum
+          - type: custom:berr-vacuum-card
+            entity: vacuum.wall_e                       # À ADAPTER (Dreame L40)
+            name: WALL-E
+            battery: sensor.wall_e_battery_level        # À ADAPTER (ou supprime la ligne)
+            stats:
+              - entity: sensor.wall_e_cleaned_area      # À ADAPTER
+                name: Surface
+              - entity: sensor.wall_e_cleaning_time     # À ADAPTER
+                name: Durée
+
+      # ---------------- Colonne 3 : pièces + énergie -----------------
+      - type: grid
+        cards:
+          - type: heading
+            heading: Pièces
+            icon: mdi:floor-plan
+          - type: custom:berr-room-card
+            name: Salon
+            icon: mdi:sofa-outline
+            temperature: sensor.salon_temperature       # À ADAPTER
+            humidity: sensor.salon_humidite             # À ADAPTER
+            entities:
+              - entity: light.salon                     # À ADAPTER
+                name: Plafonnier
+              - entity: light.lampadaire                # À ADAPTER
+                name: Lampadaire
+              - entity: light.petite_boule              # À ADAPTER
+                name: Petite boule
+          - type: custom:berr-room-card
+            name: Cuisine
+            icon: mdi:silverware-fork-knife
+            entities:
+              - entity: light.cuisine                   # À ADAPTER (variateur RODRET)
+                name: Plafonnier
+              - entity: light.led_cuisine               # À ADAPTER
+                name: LED plan de travail
+          - type: custom:berr-room-card
+            name: Balcon
+            icon: mdi:balcony
+            entities:
+              - entity: switch.guirlande_balcon         # À ADAPTER (prise Zigbee)
+                name: Guirlande
+                icon: mdi:string-lights
+
+          - type: heading
+            heading: Énergie
+            icon: mdi:lightning-bolt-outline
+          - type: custom:berr-sensor-card
+            entity: sensor.puissance_maison             # À ADAPTER
+            name: Conso instantanée
+            icon: mdi:flash
+            tone: active
+          - type: custom:berr-sensor-card
+            entity: sensor.salon_temperature            # À ADAPTER
+            name: Température salon
+            tone: blue
+            hours: 48

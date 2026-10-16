@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Berr Dashboard</title>
+<!--
+  Page d'aperçu : affiche les cartes berr-* avec une FAUSSE maison
+  (aucun Home Assistant nécessaire). Ouvre ce fichier dans ton navigateur.
+  Les boutons fonctionnent : ils modifient les états simulés.
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --berr-accent: #f5b544; --berr-alert: #ff5d5d; --berr-ok: #3ddc97; --berr-info: #8b7cf6; --berr-blue: #4cc2ff;
+    --berr-card-bg: rgba(22, 29, 45, 0.72); --berr-card-border: rgba(255, 255, 255, 0.07);
+    --primary-text-color: #eef1f7; --secondary-text-color: #8b93a7;
+  }
+  html { background: #0f1522; }
+  html, body { margin: 0; min-height: 100%; }
+  body {
+    font-family: 'Inter', system-ui, sans-serif; color: var(--primary-text-color);
+    background:
+      radial-gradient(1200px 700px at 12% -10%, rgba(245,181,68,0.10), transparent 60%),
+      radial-gradient(900px 600px at 100% 0%, rgba(139,124,246,0.12), transparent 55%),
+      radial-gradient(900px 700px at 50% 120%, rgba(76,194,255,0.08), transparent 60%),
+      linear-gradient(180deg, #0c111c 0%, #111827 100%);
+    background-attachment: fixed;
+  }
+  main { max-width: 1320px; margin: 0 auto; padding: 24px 16px 48px; display: grid; gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); align-items: start; }
+  section { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+  h2 { margin: 14px 4px 0; font-size: 15px; font-weight: 700; color: #eef1f7; display: flex; align-items: center; gap: 8px; }
+  h2 span { color: #8b93a7; font-weight: 400; font-size: 18px; }
+  .tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  @media (max-width: 420px) { .tiles { grid-template-columns: repeat(2, 1fr); } .pair { grid-template-columns: 1fr; } }
+  .note { grid-column: 1 / -1; font-size: 12px; color: #8b93a7; text-align: center; margin-top: 8px; }
+  #toast { position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%) translateY(80px); background: #161d2d;
+    border: 1px solid rgba(255,255,255,.1); padding: 10px 16px; border-radius: 14px; font-size: 13px; transition: transform .3s; z-index: 9; }
+  #toast.show { transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+<main>
+  <section>
+    <berr-header-card data-cfg='{"user":"Bilou","name":"Maison","weather":"weather.maison","chips":["alarm_control_panel.alarme","person.bilou","person.kamelya"]}'></berr-header-card>
+    <h2><span>◆</span>Sécurité</h2>
+    <div class="tiles">
+      <berr-tile-card data-cfg='{"entity":"lock.porte_entree","name":"Serrure","confirm":false}'></berr-tile-card>
+      <berr-tile-card data-cfg='{"entity":"alarm_control_panel.alarme","name":"Alarme","tap_action":{"service":"demo.alarm"}}'></berr-tile-card>
+      <berr-tile-card data-cfg='{"entity":"valve.robinet","name":"Robinet"}'></berr-tile-card>
+      <berr-tile-card data-cfg='{"entity":"input_boolean.simulation","name":"Simulation","icon":"mdi:home-lightning-bolt-outline"}'></berr-tile-card>
+    </div>
+    <berr-tile-card data-cfg='{"entity":"binary_sensor.badring_fuite","name":"Fuite d&apos;eau · cuisine","layout":"horizontal"}'></berr-tile-card>
+    <h2><span>◆</span>Énergie</h2>
+    <div class="pair">
+      <berr-sensor-card data-cfg='{"entity":"sensor.puissance_maison","name":"Conso instantanée","icon":"mdi:flash"}'></berr-sensor-card>
+      <berr-sensor-card data-cfg='{"entity":"sensor.salon_temperature","name":"Temp. salon","tone":"blue"}'></berr-sensor-card>
+    </div>
+  </section>
+
+  <section>
+    <h2><span>◆</span>Multimédia</h2>
+    <berr-media-card data-cfg='{"entity":"media_player.tv_salon","name":"TV Salon · Plex"}'></berr-media-card>
+    <berr-media-card data-cfg='{"entity":"media_player.echo_spot","name":"Echo Spot"}'></berr-media-card>
+    <h2><span>◆</span>Ménage</h2>
+    <berr-vacuum-card data-cfg='{"entity":"vacuum.wall_e","name":"WALL-E","stats":[{"entity":"sensor.wall_e_surface","name":"Surface"},{"entity":"sensor.wall_e_duree","name":"Durée"}]}'></berr-vacuum-card>
+  </section>
+
+  <section>
+    <h2><span>◆</span>Pièces</h2>
+    <berr-room-card data-cfg='{"name":"Salon","icon":"mdi:sofa-outline","temperature":"sensor.salon_temperature","humidity":"sensor.salon_humidite","entities":[{"entity":"light.salon","name":"Plafonnier"},{"entity":"light.lampadaire","name":"Lampadaire"},{"entity":"light.petite_boule","name":"Petite boule"},{"entity":"switch.ambilight","name":"Ambilight","icon":"mdi:television-ambient-light"}]}'></berr-room-card>
+    <berr-room-card data-cfg='{"name":"Cuisine","icon":"mdi:silverware-fork-knife","entities":[{"entity":"light.cuisine","name":"Plafonnier"},{"entity":"light.led_cuisine","name":"LED plan de travail"}]}'></berr-room-card>
+    <berr-room-card data-cfg='{"name":"Balcon","icon":"mdi:balcony","entities":[{"entity":"switch.guirlande_balcon","name":"Guirlande","icon":"mdi:string-lights"},{"entity":"cover.volet_salon","name":"Volet salon"}]}'></berr-room-card>
+  </section>
+  <p class="note">Aperçu avec une maison simulée — clique sur les tuiles, les lumières, l'aspirateur et le lecteur : tout réagit.</p>
+</main>
+<div id="toast"></div>
+
+<script type="module">
+/* ---------- 1. Faux <ha-icon> : dessine les icônes MDI ------------- */
+import * as mdi from "https://cdn.jsdelivr.net/npm/@mdi/js@7.4.47/+esm";
+const toKey = (name) => "mdi" + name.replace("mdi:", "").split("-").map((p) => p[0].toUpperCase() + p.slice(1)).join("");
+customElements.define("ha-icon", class extends HTMLElement {
+  static get observedAttributes() { return ["icon"]; }
+  connectedCallback() { this._draw(); }
+  attributeChangedCallback() { this._draw(); }
+  _draw() {
+    const path = mdi[toKey(this.getAttribute("icon") || "")] || mdi.mdiHelpCircleOutline;
+    this.style.cssText = "display:inline-flex;width:var(--mdc-icon-size,24px);height:var(--mdc-icon-size,24px)";
+    this.innerHTML = `<svg viewBox="0 0 24 24" width="100%" height="100%"><path fill="currentColor" d="${path}"/></svg>`;
+  }
+});
+
+/* ---------- 2. Jaquettes inventées (SVG) --------------------------- */
+const poster = `data:image/svg+xml;utf8,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 300">
+  <defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff8a3d"/><stop offset=".55" stop-color="#7a2b6e"/><stop offset="1" stop-color="#140c24"/></linearGradient></defs>
+  <rect width="200" height="300" fill="url(#g)"/><circle cx="100" cy="120" r="46" fill="#ffd27a" opacity=".9"/>
+  <path d="M0 210 L40 170 L70 195 L110 150 L150 190 L200 160 L200 300 L0 300Z" fill="#0d0a18"/>
+  <text x="100" y="255" text-anchor="middle" font-family="Georgia" font-size="19" fill="#fff" letter-spacing="2">LES OMBRES</text>
+  <text x="100" y="278" text-anchor="middle" font-family="Georgia" font-size="12" fill="#ffcf8a" letter-spacing="4">DU RHÔNE</text></svg>`)}`;
+const cover = `data:image/svg+xml;utf8,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <defs><radialGradient id="g" cx=".3" cy=".3" r=".9"><stop offset="0" stop-color="#4cc2ff"/><stop offset="1" stop-color="#2a1a5e"/></radialGradient></defs>
+  <rect width="200" height="200" fill="url(#g)"/><circle cx="100" cy="100" r="60" fill="none" stroke="#fff" stroke-opacity=".25" stroke-width="10"/>
+  <circle cx="100" cy="100" r="22" fill="#f5b544"/></svg>`)}`;
+
+/* ---------- 3. La fausse maison ------------------------------------ */
+const now = () => new Date().toISOString();
+const S = (entity_id, state, attributes = {}) => ({ entity_id, state, attributes, last_changed: now(), last_updated: now() });
+let states = Object.fromEntries([
+  S("weather.maison", "partlycloudy", { temperature: 14, temperature_unit: "°C", friendly_name: "Maison" }),
+  S("alarm_control_panel.alarme", "disarmed", { friendly_name: "Alarme" }),
+  S("person.bilou", "home", { friendly_name: "Bilou" }),
+  S("person.kamelya", "not_home", { friendly_name: "Kamelya" }),
+  S("lock.porte_entree", "unlocked", { friendly_name: "Porte d'entrée" }),
+  S("valve.robinet", "closed", { friendly_name: "Robinet" }),
+  S("input_boolean.simulation", "off", { friendly_name: "Simulation" }),
+  S("binary_sensor.badring_fuite", "off", { device_class: "moisture", friendly_name: "Fuite" }),
+  S("sensor.puissance_maison", "642", { unit_of_measurement: "W", device_class: "power" }),
+  S("sensor.salon_temperature", "21.4", { unit_of_measurement: "°C", device_class: "temperature" }),
+  S("sensor.salon_humidite", "48", { unit_of_measurement: "%", device_class: "humidity" }),
+  S("media_player.tv_salon", "playing", { friendly_name: "TV Salon", media_title: "Les Ombres du Rhône", media_artist: "Film · 2026",
+    app_name: "Plex", media_content_type: "movie", media_duration: 6493, media_position: 1312, media_position_updated_at: now(), entity_picture: poster }),
+  S("media_player.echo_spot", "paused", { friendly_name: "Echo Spot", media_title: "Lumières de minuit", media_artist: "Lo-fi du soir",
+    media_content_type: "music", media_duration: 214, media_position: 61, media_position_updated_at: now(), entity_picture: cover }),
+  S("vacuum.wall_e", "docked", { friendly_name: "WALL-E", battery_level: 87 }),
+  S("sensor.wall_e_surface", "42", { unit_of_measurement: "m²" }),
+  S("sensor.wall_e_duree", "38", { unit_of_measurement: "min" }),
+  S("light.salon", "off", { friendly_name: "Plafonnier" }),
+  S("light.lampadaire", "on", { brightness: 158 }),
+  S("light.petite_boule", "on", { brightness: 255 }),
+  S("switch.ambilight", "on", {}),
+  S("light.cuisine", "off", {}),
+  S("light.led_cuisine", "on", { brightness: 90 }),
+  S("switch.guirlande_balcon", "off", {}),
+  S("cover.volet_salon", "open", {}),
+].map((s) => [s.entity_id, s]));
+
+// Traductions FR (HA le fait tout seul avec hass.formatEntityState)
+const FR = {
+  on: "Allumé", off: "Éteint", locked: "Verrouillée", unlocked: "Déverrouillée", open: "Ouvert", closed: "Fermé",
+  disarmed: "Désactivée", armed_away: "Armée (absent)", armed_home: "Armée (présent)", home: "À la maison", not_home: "Absente",
+  playing: "Lecture", paused: "Pause", idle: "Inactif", docked: "Sur la base", cleaning: "Nettoyage", returning: "Retour",
+  partlycloudy: "Partiellement nuageux",
+};
+const fmt = (so) => {
+  const d = so.entity_id.split(".")[0];
+  if (d === "binary_sensor" && so.attributes.device_class === "moisture") return so.state === "on" ? "Fuite détectée !" : "Sec";
+  if (d === "valve") return so.state === "open" ? "Ouvert" : "Fermé";
+  if (d === "lock") return so.state === "locked" ? "Fermée" : "Ouverte";
+  return FR[so.state] || so.state;
+};
+
+const toast = (msg) => { const t = document.getElementById("toast"); t.textContent = msg; t.classList.add("show"); clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove("show"), 1800); };
+const set = (id, state, attrs = {}) => { states = { ...states, [id]: { ...states[id], state, attributes: { ...states[id].attributes, ...attrs }, last_changed: now() } }; };
+
+// Simule hass.callService
+async function callService(domain, service, data = {}) {
+  const ids = [].concat(data.entity_id || []);
+  for (const id of ids) {
+    const so = states[id]; if (!so) continue;
+    const d = id.split(".")[0];
+    if (service === "toggle") set(id, so.state === "on" ? "off" : "on", d === "light" && so.state === "off" ? { brightness: 200 } : {});
+    else if (service === "turn_off") set(id, "off");
+    else if (service === "turn_on") set(id, "on");
+    else if (service === "lock") set(id, "locked");
+    else if (service === "unlock") set(id, "unlocked");
+    else if (service === "open_valve") set(id, "open");
+    else if (service === "close_valve") set(id, "closed");
+    else if (d === "cover") set(id, so.state === "open" ? "closed" : "open");
+    else if (service === "start") set(id, "cleaning");
+    else if (service === "pause") set(id, "paused");
+    else if (service === "return_to_base") set(id, "returning");
+    else if (service === "media_play_pause") {
+      const pos = so.attributes.media_position + (so.state === "playing" ? (Date.now() - new Date(so.attributes.media_position_updated_at)) / 1000 : 0);
+      set(id, so.state === "playing" ? "paused" : "playing", { media_position: pos, media_position_updated_at: now() });
+    }
+  }
+  if (domain === "demo") {
+    const a = states["alarm_control_panel.alarme"];
+    set(a.entity_id, a.state === "disarmed" ? "armed_away" : "disarmed");
+  }
+  toast(`${domain}.${service}${ids.length ? " → " + ids.join(", ") : ""}`);
+  push();
+}
+
+// Simule l'historique (courbes réalistes)
+async function callApi(method, path) {
+  const id = decodeURIComponent(path.match(/filter_entity_id=([^&]+)/)[1]);
+  const base = parseFloat(states[id].state), out = [], t0 = Date.now() - 24 * 3600e3;
+  for (let i = 0; i <= 144; i++) {
+    const t = t0 + i * 600e3, h = new Date(t).getHours();
+    const v = id.includes("puissance")
+      ? 280 + 420 * Math.max(0, Math.sin(((h - 6) / 24) * Math.PI * 2)) + (h >= 18 && h <= 22 ? 900 : 0) + Math.random() * 120
+      : base - 1.6 + 1.8 * Math.sin(((h - 9) / 24) * Math.PI * 2) + Math.random() * 0.2;
+    out.push({ state: String(v.toFixed(1)), last_changed: new Date(t).toISOString() });
+  }
+  return [out];
+}
+
+const cards = [...document.querySelectorAll("[data-cfg]")];
+const makeHass = () => ({ states, user: { name: "Bilou" }, callService, callApi, formatEntityState: fmt, language: "fr" });
+function push() { const h = makeHass(); cards.forEach((c) => (c.hass = h)); }
+
+// Charge les cartes puis branche la fausse maison
+await import("../www/berr-cards/berr-cards.js");
+cards.forEach((c) => c.setConfig(JSON.parse(c.dataset.cfg)));
+push();
+// L'aspirateur revient se recharger tout seul après 6 s de ménage
+setInterval(() => {
+  const v = states["vacuum.wall_e"];
+  if (v.state === "returning") { set("vacuum.wall_e", "docked"); push(); }
+  if (v.state === "cleaning" && Date.now() - new Date(v.last_changed) > 6000) {
+    set("vacuum.wall_e", "cleaning", { battery_level: Math.max(5, v.attributes.battery_level - 1) }); push();
+  }
+}, 1500);
+// "Fermer" les more-info : on affiche juste un toast
+document.addEventListener("hass-more-info", (e) => toast(`Fenêtre détail : ${e.detail.entityId}`));
+</script>
+</body>
+</html>

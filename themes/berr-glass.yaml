@@ -1,0 +1,114 @@
+# =====================================================================
+#  Thème "Berr Glass" — par BERR'INFO
+#  Style : verre dépoli sombre, accents ambre (façon tablette murale)
+#  Installation : copier ce fichier dans /config/themes/
+#  puis dans configuration.yaml :
+#    frontend:
+#      themes: !include_dir_merge_named themes
+# =====================================================================
+Berr Glass:
+  # --- Variables partagées avec les cartes berr-* --------------------
+  berr-accent: "#f5b544"          # ambre : lumières allumées, actif
+  berr-alert: "#ff5d5d"           # rouge : serrure ouverte, fuite d'eau
+  berr-ok: "#3ddc97"              # vert : alarme armée, tout va bien
+  berr-info: "#8b7cf6"            # violet : multimédia
+  berr-blue: "#4cc2ff"            # bleu : eau, ouvertures
+  berr-radius: "22px"
+  berr-font: "'Inter', 'Segoe UI', system-ui, sans-serif"
+
+  modes:
+    dark:
+      # --- Fond général : nuit bleutée avec halos lumineux -----------
+      lovelace-background: >-
+        center / cover no-repeat fixed
+        radial-gradient(1200px 700px at 12% -10%, rgba(245,181,68,0.10), transparent 60%),
+        radial-gradient(900px 600px at 100% 0%, rgba(139,124,246,0.12), transparent 55%),
+        radial-gradient(900px 700px at 50% 120%, rgba(76,194,255,0.08), transparent 60%),
+        linear-gradient(180deg, #0c111c 0%, #111827 100%)
+      primary-background-color: "#0c111c"
+      secondary-background-color: "#121a29"
+      card-background-color: "#161d2d"
+
+      # --- Cartes natives HA (pour qu'elles s'accordent avec les nôtres)
+      berr-card-bg: "rgba(22, 29, 45, 0.72)"
+      berr-card-border: "rgba(255, 255, 255, 0.07)"
+      ha-card-background: "rgba(22, 29, 45, 0.72)"
+      ha-card-border-radius: "22px"
+      ha-card-border-width: "1px"
+      ha-card-border-color: "rgba(255, 255, 255, 0.07)"
+      ha-card-box-shadow: "0 10px 30px -12px rgba(0,0,0,0.6)"
+      ha-dialog-border-radius: "24px"
+      mdc-dialog-scrim-color: "rgba(5, 8, 14, 0.7)"
+
+      # --- Texte -------------------------------------------------------
+      primary-text-color: "#eef1f7"
+      secondary-text-color: "#8b93a7"
+      disabled-text-color: "#4a5163"
+      text-primary-color: "#0c111c"
+
+      # --- Couleurs principales ---------------------------------------
+      primary-color: "#f5b544"
+      accent-color: "#f5b544"
+      light-primary-color: "#f8cd7c"
+      dark-primary-color: "#c98a1e"
+      divider-color: "rgba(255, 255, 255, 0.06)"
+
+      # --- Barre du haut et menu latéral -------------------------------
+      app-header-background-color: "rgba(12, 17, 28, 0.85)"
+      app-header-text-color: "#eef1f7"
+      app-header-border-bottom: "1px solid rgba(255,255,255,0.05)"
+      sidebar-background-color: "#0e1421"
+      sidebar-text-color: "#8b93a7"
+      sidebar-icon-color: "#8b93a7"
+      sidebar-selected-text-color: "#f5b544"
+      sidebar-selected-icon-color: "#f5b544"
+
+      # --- États des entités (cartes natives) --------------------------
+      state-icon-color: "#8b93a7"
+      state-active-color: "#f5b544"
+      state-light-active-color: "#f5b544"
+      state-switch-active-color: "#f5b544"
+      state-lock-locked-color: "#3ddc97"
+      state-lock-unlocked-color: "#ff5d5d"
+      state-alarm_control_panel-armed_away-color: "#3ddc97"
+      state-alarm_control_panel-disarmed-color: "#8b93a7"
+      state-binary_sensor-moisture-on-color: "#ff5d5d"
+      state-media_player-active-color: "#8b7cf6"
+
+      # --- Interrupteurs, sliders --------------------------------------
+      switch-checked-color: "#f5b544"
+      switch-checked-button-color: "#f5b544"
+      switch-checked-track-color: "#f5b544"
+      slider-color: "#f5b544"
+      slider-bar-color: "rgba(255,255,255,0.12)"
+
+      # --- Champs de formulaire ----------------------------------------
+      input-fill-color: "rgba(255,255,255,0.04)"
+      input-ink-color: "#eef1f7"
+      input-label-ink-color: "#8b93a7"
+      code-editor-background-color: "#0f1626"
+
+      # --- Badges / chips ----------------------------------------------
+      ha-badge-background-color: "rgba(22, 29, 45, 0.8)"
+      ha-badge-border-radius: "14px"
+
+    light:
+      # Version claire, si la tablette est en plein soleil
+      lovelace-background: >-
+        center / cover no-repeat fixed
+        radial-gradient(1000px 600px at 10% -10%, rgba(245,181,68,0.18), transparent 60%),
+        linear-gradient(180deg, #f3f5fa 0%, #e8ecf4 100%)
+      primary-background-color: "#f3f5fa"
+      berr-card-bg: "rgba(255, 255, 255, 0.78)"
+      berr-card-border: "rgba(15, 23, 42, 0.06)"
+      ha-card-background: "rgba(255, 255, 255, 0.78)"
+      ha-card-border-radius: "22px"
+      ha-card-border-color: "rgba(15, 23, 42, 0.06)"
+      ha-card-box-shadow: "0 8px 24px -14px rgba(15,23,42,0.25)"
+      primary-text-color: "#141a26"
+      secondary-text-color: "#5d667a"
+      primary-color: "#d9951f"
+      accent-color: "#d9951f"
+      state-active-color: "#d9951f"
+      state-light-active-color: "#d9951f"
+      switch-checked-color: "#d9951f"
